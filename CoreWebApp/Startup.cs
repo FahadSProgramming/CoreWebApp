@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 //using AutoMapper.Configuration;
 using CoreWebApp.Application.Interfaces;
@@ -13,6 +14,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using FluentValidation.AspNetCore;
 
 namespace CoreWebApp {
     public class Startup {
@@ -25,9 +27,13 @@ namespace CoreWebApp {
         }
         public void ConfigureServices(IServiceCollection services) {
 
-            services.AddControllers();
-            //services.AddMediatR()
-            services.AddDbContext<ICoreWebAppContext, CoreWebDbContext>(options =>  options.UseSqlServer(Configuration.GetConnectionString("CoreConnection")));
+            services.AddMediatR(typeof(CoreWebApp.Application.Interfaces.ICoreWebAppContext).GetTypeInfo().Assembly);
+
+            services.AddDbContext<ICoreWebAppContext, CoreWebDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("CoreConnection")));
+
+            services.AddControllers()
+                .AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<CoreWebApp.Application.Interfaces.ICoreWebAppContext>());
+
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

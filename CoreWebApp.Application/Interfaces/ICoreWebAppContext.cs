@@ -1,5 +1,7 @@
 ﻿using CoreWebApp.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreWebApp.Application.Interfaces {
     public interface ICoreWebAppContext {
@@ -11,5 +13,7 @@ namespace CoreWebApp.Application.Interfaces {
         DbSet<Category> Category { get; set; }
         DbSet<Incident> Incident { get; set; }
         DbSet<IncidentActivity> IncidentActivity { get; set; }
+
+        Task<int> SaveChangesAsync(CancellationToken cancellationToken);
     }
 }
